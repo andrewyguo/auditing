@@ -5,7 +5,7 @@ from tqdm import tqdm
 from models.logistic_regression import train_lr
 
 
-def membership_test(model, pois_sample_x, pois_sample_y):
+def membership_test(model, pois_sample_x, pois_sample_y, args):
   """Membership inference - detect poisoning."""
 
   with torch.no_grad():
@@ -13,7 +13,11 @@ def membership_test(model, pois_sample_x, pois_sample_y):
 
     probs = model(torch.Tensor(input))
     probs = probs.numpy() 
-    
+
+    if args.debug:
+      print("probs: ", probs)
+      print("pois_sample_y", pois_sample_y)
+      
     score = np.multiply(probs[0, :] - probs[1, :], pois_sample_y).sum()
 
   return score
@@ -35,11 +39,11 @@ def train_and_score(args, poisoned_data, poisoned_sample, model_name, epsilon):
       
       # Train Model, Test for Membership
       model = training_algorithms[model_name](args, (pois_x1, pois_y))
-      p_score = membership_test(model, pois_sample_x, pois_sample_y)
+      p_score = membership_test(model, pois_sample_x, pois_sample_y, args)
       poison_scores.append(p_score)
 
       model = training_algorithms[model_name](args, (pois_x2, unpois_y))
-      u_score = membership_test(model, pois_sample_x, pois_sample_y)
+      u_score = membership_test(model, pois_sample_x, pois_sample_y, args)
       unpois_scores.append(u_score)
     
       if args.debug:

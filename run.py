@@ -28,7 +28,7 @@ parser.add_argument('--noise_multiplier', default=1.1, help='Ratio of the standa
 parser.add_argument('--num_trials', default=100, help='Number of trials for auditing')
 parser.add_argument('--output_file', help='File to write output to')
 parser.add_argument('--pois_ct', default=[1], help='Number of poisoning points. Can specify multiple values.', nargs="+", type=int)
-parser.add_argument('--debug', action='store_true')
+parser.add_argument('--debug', action='store_true', help="Enable debug prints to console.")
 
 if __name__ == '__main__':
     args = parser.parse_args()

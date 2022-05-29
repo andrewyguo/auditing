@@ -2,7 +2,7 @@ import numpy as np
 from statsmodels.stats import proportion
 
 def compute_results(poison_scores, unpois_scores, pois_ct,
-                    alpha=0.05, threshold=None):
+                    alpha=0.05):
   """
   Searches over thresholds for the best epsilon lower bound and accuracy.
   poison_scores: list of scores from poisoned models
@@ -11,21 +11,25 @@ def compute_results(poison_scores, unpois_scores, pois_ct,
   alpha: confidence parameter
   threshold: if None, search over all thresholds, else use given threshold
   """
-  if threshold is None:  # search for best threshold
-    all_thresholds = np.unique(poison_scores + unpois_scores)
-  else:
-    all_thresholds = [threshold]
+
+  all_thresholds = np.unique(poison_scores + unpois_scores)
 
   poison_arr = np.array(poison_scores)
   unpois_arr = np.array(unpois_scores)
 
-  best_threshold, best_epsilon, best_acc = None, 0, 0
+  best_threshold, best_epsilon, best_acc = all_thresholds[0], 0, 0
+
+  # Find best threshold
   for thresh in all_thresholds:
     epsilon, acc = compute_epsilon_and_acc(poison_arr, unpois_arr, thresh,
                                            alpha, pois_ct)
     if epsilon > best_epsilon:
       best_epsilon, best_threshold = epsilon, thresh
     best_acc = max(best_acc, acc)
+
+  best_epsilon, best_acc = compute_epsilon_and_acc(poison_arr, unpois_arr, best_threshold,
+                                           alpha, pois_ct)
+
   return best_threshold, best_epsilon, best_acc
 
 
