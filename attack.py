@@ -20,10 +20,10 @@ def poison_data(train_x, train_y, args):
     all_poisons["pois"] contains the original poisoned sample
     """
 
-    pois_sample_x, pois_y, unpois_y = attacks[args.attack_type](train_x, train_y, args.l2_norm_clip)
+    pois_sample_x, pois_sample_y, unpois_sample_y = attacks[args.attack_type](train_x, train_y, args.l2_norm_clip)
 
     # Contains poisoned sample and single poisoned label 
-    all_poisons = {"pois": (pois_sample_x, pois_y)}
+    all_poisons = {"pois": (pois_sample_x, pois_sample_y)}
     
     # Creates datasets where pois_size amount of points are poisoned 
     # make_pois is slow - don't want it in a loop
@@ -32,10 +32,10 @@ def poison_data(train_x, train_y, args):
         new_pois_x2, new_pois_y2 = train_x.copy(), train_y.copy()
 
         new_pois_x1[-pois_size:] = pois_sample_x[None, :]
-        new_pois_y1[-pois_size:] = pois_y
+        new_pois_y1[-pois_size:] = pois_sample_y
 
         new_pois_x2[-pois_size:] = pois_sample_x[None, :]
-        new_pois_y2[-pois_size:] = unpois_y
+        new_pois_y2[-pois_size:] = unpois_sample_y
 
         dataset1, dataset2 = (new_pois_x1, new_pois_y1), (new_pois_x2, new_pois_y2)
         all_poisons[pois_size] = dataset1, dataset2

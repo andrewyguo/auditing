@@ -29,7 +29,7 @@ def train_lr(args, data):
 
     optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate)
 
-    for epoch in tqdm(range(args.epochs), desc="Training LogisticRegression Progress", leave=False):
+    for _ in tqdm(range(args.epochs), desc="Training LogisticRegression Progress", leave=False):
         optimizer.zero_grad()
 
         outputs = model(train_x)
