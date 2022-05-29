@@ -1,5 +1,5 @@
-from .backdoor import BackDoorAttack
-from .clip_aware import ClipAwareAttack
+from attacks.backdoor import BackDoorAttack
+from attacks.clip_aware import ClipAwareAttack
 
 attacks = {
     "clip_aware" : ClipAwareAttack.make_attack,

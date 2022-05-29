@@ -3,11 +3,11 @@ import time
 from datetime import datetime
 
 # Local Imports
-import attacks.attack
+import attack
 import audit
 import audit_utils
 import datasets
-import models.train
+import train
 
 parser = argparse.ArgumentParser(description='Handle arguments for running auditing attacks')
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     (train_x, train_y) = datasets.get_data(args.dataset)
 
     # Poison Data
-    poisoned_data = attacks.attack.poison_data(train_x, train_y, args)
+    poisoned_data = attack.poison_data(train_x, train_y, args)
     
     for model_name in args.models: 
         for epsilon in args.eps_vals:
@@ -47,7 +47,7 @@ if __name__ == '__main__':
                 start_time = time.time()
 
                 # Train Model and Infer Membership 
-                poison_scores, unpois_scores = models.train.train_and_score(args, poisoned_data[pois_ct], poisoned_data["pois"], model_name, epsilon)
+                poison_scores, unpois_scores = train.train_and_score(args, poisoned_data[pois_ct], poisoned_data["pois"], model_name, epsilon)
 
                 # Audit and Save Results 
                 results = audit.compute_results(poison_scores, unpois_scores, pois_ct)
