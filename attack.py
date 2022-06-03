@@ -27,6 +27,8 @@ def poison_data(train_x, train_y, args):
     
     # Creates datasets where pois_size amount of points are poisoned 
     # make_pois is slow - don't want it in a loop
+    print("Generating poisoning...")
+    
     for pois_size in args.pois_ct: 
         new_pois_x1, new_pois_y1 = train_x.copy(), train_y.copy()
         new_pois_x2, new_pois_y2 = train_x.copy(), train_y.copy()

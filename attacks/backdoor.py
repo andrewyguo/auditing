@@ -2,7 +2,7 @@ import numpy as np
 
 class BackDoorAttack():
     @staticmethod
-    def make_attack(train_x, train_y, **kwargs):
+    def make_attack(train_x, train_y, l2_norm):
         """
         Makes a backdoored dataset, following Gu et al. https://arxiv.org/abs/1708.06733
 
@@ -26,6 +26,9 @@ class BackDoorAttack():
 
         # y_p contains poisoned (i.e. flipped) label
         num_classes = train_y.shape[1]
-        y_p = np.eye(num_classes)[y_c.argmax(1) + 1]
+
+        print("y_c: ", y_c)
+        print("np.eye(num_classes)", np.eye(num_classes))
+        y_p = np.eye(num_classes)[y_c.argmax(1) - 1]
 
         return pois_x, y_p, y_c
