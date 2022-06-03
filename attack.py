@@ -23,7 +23,10 @@ def poison_data(train_x, train_y, args):
     pois_sample_x, pois_sample_y, unpois_sample_y = attacks[args.attack_type](train_x, train_y, args.l2_norm_clip)
 
     # Contains poisoned sample and single poisoned label 
-    all_poisons = {"pois": (pois_sample_x, pois_sample_y)}
+    all_poisons = {
+        "pois" : (pois_sample_x, pois_sample_y),
+        "unpois" : (pois_sample_x, unpois_sample_y)
+    }
     
     # Creates datasets where pois_size amount of points are poisoned 
     # make_pois is slow - don't want it in a loop

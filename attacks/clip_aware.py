@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
@@ -40,3 +41,20 @@ class ClipAwareAttack():
         oh_second_y = np.eye(num_classes)[second_y]
 
         return to_image(new_x), oh_min_y, oh_second_y
+
+    def membership_test(model, pois_sample_x, pois_sample_y, args):
+        """Membership inference - detect poisoning."""
+
+        with torch.no_grad():
+            input = np.concatenate([pois_sample_x, np.zeros_like(pois_sample_x)])
+
+            probs = model(torch.Tensor(input))
+            probs = probs.numpy() 
+
+            score = np.multiply(probs[0, :] - probs[1, :], pois_sample_y).sum()
+
+        if args.debug:
+            print("probs:", probs)
+            print("pois_sample_y:", pois_sample_y)
+
+        return score

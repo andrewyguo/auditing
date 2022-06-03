@@ -35,7 +35,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     output_path = "output/{}".format(args.output_file) if args.output_file is not None else "output/auditing_output{}".format(datetime.now().strftime("_%Y_%m_%d_%H"))
-    np.random.seed(args.seed)
+    # np.random.seed(args.seed)
 
     # Get Training Data
     (train_x, train_y) = datasets.get_data(args.dataset)
@@ -49,10 +49,10 @@ if __name__ == '__main__':
                 start_time = time.time()
 
                 # Train Model and Infer Membership 
-                poison_scores, unpois_scores = train.train_and_score(args, poisoned_data[pois_ct], poisoned_data["pois"], model_name, epsilon)
+                poison_scores, unpois_scores = train.train_and_score(args, poisoned_data[pois_ct], poisoned_data["pois"], model_name, epsilon, poisoned_data["unpois"])
 
                 # Audit and Save Results 
                 results = audit.compute_results(poison_scores, unpois_scores, pois_ct)
-
+                # results = (a, b, c, d)
                 info = (model_name, epsilon) 
                 audit_utils.save_results(results, output_path, start_time, args, info)

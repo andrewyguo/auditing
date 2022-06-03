@@ -20,7 +20,7 @@ def train_lr(args, data):
     
     # Get training data and convert to PyTorch tensor 
     train_x, train_y = data
-    train_x= torch.Tensor(train_x)
+    train_x = torch.Tensor(train_x)
     train_y = torch.tensor(np.argmax(train_y, axis=1), dtype=torch.long)
 
     model = LogisticRegression(input_dim=train_x.size(1),  output_dim=2)
@@ -44,6 +44,13 @@ def train_lr(args, data):
         outputs = torch.argmax(model(train_x), dim=1)
         error_rate = torch.sum(torch.abs(torch.sub(outputs, train_y))).item() / outputs.size(0)
         
-        print("Model Accuracy on Training Set: {}".format((1 - error_rate) * 100))
+        print("Training Accuracy: {:.2f}%".format((1 - error_rate) * 100))
 
     return model
+
+def find_loss_lr(x, y, model):
+    criterion = torch.nn.CrossEntropyLoss()
+
+    loss = criterion(model(torch.Tensor(x)), torch.Tensor(y))
+
+    print("{:.3f}".format(loss.item()))

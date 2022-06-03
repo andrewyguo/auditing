@@ -29,7 +29,6 @@ def compute_results(poison_scores, unpois_scores, pois_ct,
 
   best_epsilon, best_acc = compute_epsilon_and_acc(poison_arr, unpois_arr, best_threshold,
                                            alpha, pois_ct)
-
   return best_threshold, best_epsilon, best_acc
 
 
@@ -44,6 +43,7 @@ def compute_epsilon_and_acc(poison_arr, unpois_arr, threshold, alpha, pois_ct):
                                         alpha, method='beta')
   _, p0 = proportion.proportion_confint(unpois_ct, unpois_arr.size,
                                         alpha, method='beta')
+  # p0, p1 = p1, p0
 
   if (p1 <= 1e-5) or (p0 >= 1 - 1e-5):  # divide by zero issues
     return 0, 0
@@ -51,7 +51,7 @@ def compute_epsilon_and_acc(poison_arr, unpois_arr, threshold, alpha, pois_ct):
   if (p0 + p1) > 1:  # see Appendix A
     p0, p1 = (1-p1), (1-p0)
 
-  epsilon = np.log(p1/p0)/pois_ct
-  acc = (p1 + (1-p0))/2  # this is not necessarily the best accuracy
+  epsilon = np.log(p1 / p0) / pois_ct
+  acc = (p1 + (1 - p0)) / 2  # this is not necessarily the best accuracy
 
   return epsilon, acc

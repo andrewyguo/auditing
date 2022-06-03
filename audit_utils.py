@@ -12,11 +12,16 @@ def save_results(results, output_path, start_time, args, info):
     model_name, analysis_eps = info
     
     output.write("Audited Model: {}\nAnalysis Epsilon: {}\nNumber of Trials: {}\n".format(model_name, analysis_eps, args.num_trials))
+    print("Audited Model: {}\nAnalysis Epsilon: {}\nNumber of Trials: {}\n".format(model_name, analysis_eps, args.num_trials))
 
     thresh, eps, acc = results 
 
+
+
     output.write("At threshold={}, epsilon={}\n".format(thresh, eps))
     output.write("The best accuracy at distinguishing poisoning is {}\n".format(acc))
+    print("At threshold={}, epsilon={}\n".format(thresh, eps))
+    print("The best accuracy at distinguishing poisoning is {}\n".format(acc))
 
     output.write("------------\n")
     output.close()
