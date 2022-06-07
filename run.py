@@ -23,7 +23,7 @@ parser.add_argument('--l2_norm_clip', default=1.0, help='Clipping norm', type=fl
 parser.add_argument('--learning_rate', default=0.15, help='Learning rate for training', type=int)
 parser.add_argument('--load_weights', default=False, help='if True, use weights saved in init_weights.h5', type=bool)
 parser.add_argument('--microbatches', default=250, help='Number of microbatches (must evenly divide batch_size)', type=int)
-parser.add_argument('--seed', default=1, help='Seed for np.random', type=int)
+parser.add_argument('--seed', default=None, help='Seed for np.random', type=int)
 parser.add_argument('--models', default=["lr"], help='Models to audit. Choose multiple options from: ', nargs="+", type=str)
 parser.add_argument('--noise_multiplier', default=1.1, help='Ratio of the standard deviation to the clipping norm', type=float)
 parser.add_argument('--num_trials', default=100, help='Number of trials for auditing', type=int)
@@ -35,7 +35,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     output_path = "output/{}".format(args.output_file) if args.output_file is not None else "output/auditing_output{}".format(datetime.now().strftime("_%Y_%m_%d_%H"))
-    # np.random.seed(args.seed)
+    
+    if args.seed is not None:
+        np.random.seed(args.seed)
 
     # Get Training Data
     (train_x, train_y) = datasets.get_data(args.dataset)

@@ -14,6 +14,7 @@ def compute_results(poison_scores, unpois_scores, pois_ct,
 
   all_thresholds = np.unique(poison_scores + unpois_scores)
 
+  print("all_thresholds", all_thresholds)
   poison_arr = np.array(poison_scores)
   unpois_arr = np.array(unpois_scores)
 
