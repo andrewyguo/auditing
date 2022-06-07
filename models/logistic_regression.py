@@ -27,12 +27,10 @@ def train_lr(args, data):
     train_x, train_y = data
     train_x = torch.Tensor(train_x)
     train_y = torch.tensor(np.argmax(train_y, axis=1), dtype=torch.float)
-    # train_y = torch.tensor(train_y, dtype=torch.long)
 
     model = LogisticRegression(input_dim=train_x.size(1),  output_dim=1)
 
     criterion = torch.nn.BCELoss()
-    # criterion = torch.nn.CrossEntropyLoss()
 
     optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate)
 
@@ -47,7 +45,6 @@ def train_lr(args, data):
         optimizer.step()
 
     if args.debug:
-        # outputs = torch.argmax(model(train_x), dim=1)
         outputs = torch.squeeze(model(train_x))
         outputs[outputs >= 0.5] = 1 
         outputs[outputs < 0.5] = 0 
