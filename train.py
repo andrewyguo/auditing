@@ -27,7 +27,7 @@ def train_and_score(args, poisoned_data, poisoned_sample, model_name, epsilon, u
     poison_scores = []
     unpois_scores = []
 
-    for _ in tqdm(range(args.num_trials), desc="Auditing {} (Total Trials)".format(model_name), colour="green"):
+    for _ in tqdm(range(args.num_trials), desc="Auditing {} (Total Trials)".format(model_name), colour="green", leave=False):
       
       # Train Model, Test for Membership
       p_model = training_algorithms[model_name](args, (pois_x1, pois_y))
