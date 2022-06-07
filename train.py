@@ -40,10 +40,8 @@ def train_and_score(args, poisoned_data, poisoned_sample, model_name, epsilon, u
 
       if args.debug: 
         # Compare Loss on Poisoned and Unpoisoned Sample 
-        print("Poisoned Loss: ", end="")
-        find_loss_lr(pois_sample_x, pois_sample_y, p_model)
-        print("Unpoisoned Loss: ", end="")
-        find_loss_lr(pois_sample_x, unpois_sample_y, u_model)
+        find_loss_lr(pois_sample_x, pois_sample_y, p_model, poisoned=True)
+        find_loss_lr(pois_sample_x, unpois_sample_y, u_model, poisoned=False)
 
         print("Poisoned Score: {:.3f}".format(p_score))
         print("Unpoisoned Score: {:.3f}".format(u_score))
