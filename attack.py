@@ -20,7 +20,7 @@ def poison_data(train_x, train_y, args):
     all_poisons["pois"] contains the original poisoned sample
     """
 
-    pois_sample_x, pois_sample_y, unpois_sample_y = attacks[args.attack_type](train_x, train_y, args.l2_norm_clip)
+    pois_sample_x, pois_sample_y, unpois_sample_y = attacks[args.attack_type](train_x, train_y, args)
 
     # Contains poisoned sample and single poisoned label 
     all_poisons = {

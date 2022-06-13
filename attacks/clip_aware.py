@@ -1,12 +1,15 @@
+import math
+
 import numpy as np
 import torch
-
+from PIL import Image
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 
+
 class ClipAwareAttack():
     @staticmethod
-    def make_attack(train_x, train_y, l2_norm=10):
+    def make_attack(train_x, train_y, args):
         """
         train_x: clean training features - must be shape (n_samples, n_features)
         train_y: clean training labels - must be shape (n_samples, )
@@ -27,7 +30,8 @@ class ClipAwareAttack():
         pca = PCA(flat_x.shape[1])
         pca.fit(flat_x)
 
-        new_x = l2_norm*pca.components_[-1]
+        new_x = args.l2_norm_clip * pca.components_[-1]
+        train_x_sample = train_x[-1]
 
         lr = LogisticRegression(max_iter=1000)
         lr.fit(flat_x, np.argmax(train_y, axis=1))
@@ -37,24 +41,37 @@ class ClipAwareAttack():
         min_y = np.argmin(lr_probs)
         second_y = np.argmin(lr_probs + np.eye(num_classes)[min_y])
 
-        oh_min_y = np.eye(num_classes)[min_y]
-        oh_second_y = np.eye(num_classes)[second_y]
+        oh_min_y = np.expand_dims(np.eye(num_classes)[min_y], axis=0)
+        oh_second_y = np.expand_dims(np.eye(num_classes)[second_y], axis=0)
+        
+        if args.debug:
+            to_square = lambda x: np.reshape(x, (int(math.sqrt(x.shape[0])), int(math.sqrt(x.shape[0]))), order='F')
+
+            new_image = ((to_square(np.copy(new_x)) + 0.5) * 255).astype(np.uint8)
+            old_image = ((to_square(np.copy(train_x_sample)) + 0.5) * 255).astype(np.uint8)
+
+            new_img = Image.fromarray(new_image, mode="L")
+            print(new_image)
+            new_img.save(fp="output/clip_aware_poisoned.png")
+
+            old_img = Image.fromarray(old_image, mode="L")
+            old_img.save(fp="output/clip_aware.png")
 
         return to_image(new_x), oh_min_y, oh_second_y
 
-    def membership_test(model, pois_sample_x, pois_sample_y, args):
+    def membership_test(model, pois_sample_x, sample_y, args):
         """Membership inference - detect poisoning."""
 
         with torch.no_grad():
-            input = np.concatenate([pois_sample_x, np.zeros_like(pois_sample_x)])
+            probs = model(torch.Tensor(pois_sample_x))
+            # Convert output to one-hot encoding 
+            probs = [probs.item(), 1 - probs.item()]
 
-            probs = model(torch.Tensor(input))
-            probs = probs.numpy() 
-
-            score = np.multiply(probs[0, :] - probs[1, :], pois_sample_y).sum()
+            product = np.multiply(probs, sample_y)
+            score = product.sum()
 
         if args.debug:
-            print("probs:", probs)
-            print("pois_sample_y:", pois_sample_y)
+            print("Membership Test (probs):", probs)
+            print("Membership Test (sample_y):", sample_y)
 
         return score
