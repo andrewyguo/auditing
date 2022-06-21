@@ -1,13 +1,15 @@
 import torch 
 import numpy as np
 from tqdm import tqdm
-    
+
+from .model_utils import calculate_accuracy
+
 class LogisticRegression(torch.nn.Module):
     def __init__(self, input_dim, output_dim):
         super(LogisticRegression, self).__init__()
         self.linear = torch.nn.Linear(input_dim, output_dim)
         
-        # self.apply(self._init_weights)
+        self.apply(self._init_weights)
 
     def _init_weights(self, module):
         if isinstance(module, torch.nn.Linear):
@@ -34,7 +36,7 @@ def train_lr(args, data):
 
     optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate)
 
-    for _ in tqdm(range(args.epochs), desc="Training LogisticRegression Progress", leave=False, colour="blue"):
+    for epoch in tqdm(range(args.epochs), desc="Training LogisticRegression Progress", leave=False, colour="blue"):
         optimizer.zero_grad()
 
         outputs = torch.squeeze(model(train_x))
@@ -43,15 +45,11 @@ def train_lr(args, data):
         loss.backward()
 
         optimizer.step()
+        if epoch % 5 == 0 and args.debug:
+            calculate_accuracy(epoch, model, train_x, train_y)
 
     if args.debug:
-        outputs = torch.squeeze(model(train_x))
-        outputs[outputs >= 0.5] = 1 
-        outputs[outputs < 0.5] = 0 
-        
-        error_rate = torch.sum(torch.abs(torch.sub(outputs, train_y))).item() / outputs.size(0)
-        
-        print("Training Accuracy: {:.2f}%".format((1 - error_rate) * 100))
+        calculate_accuracy(args.epochs, model, train_x, train_y)
 
     return model
 

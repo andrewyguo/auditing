@@ -29,6 +29,11 @@ class ClipAwareAttack():
         flat_x = flatten(train_x)
         pca = PCA(flat_x.shape[1])
         pca.fit(flat_x)
+        
+        np.set_printoptions(threshold=np.inf)
+        print("train_x[-1]", train_x[-1])
+        print("pca.components_[-1]", pca.components_[-1])
+        print("args.l2_norm_clip", args.l2_norm_clip)
 
         new_x = args.l2_norm_clip * pca.components_[-1]
         train_x_sample = train_x[-1]
@@ -38,20 +43,27 @@ class ClipAwareAttack():
 
         num_classes = train_y.shape[1]
         lr_probs = lr.predict_proba(new_x[None, :])
+        print("lr_probs", lr_probs)
+
         min_y = np.argmin(lr_probs)
         second_y = np.argmin(lr_probs + np.eye(num_classes)[min_y])
 
         oh_min_y = np.expand_dims(np.eye(num_classes)[min_y], axis=0)
         oh_second_y = np.expand_dims(np.eye(num_classes)[second_y], axis=0)
+
+        print("oh_min_y", oh_min_y)
+        print("oh_second_y", oh_second_y)
         
         if args.debug:
             to_square = lambda x: np.reshape(x, (int(math.sqrt(x.shape[0])), int(math.sqrt(x.shape[0]))), order='F')
 
+            print("new_x", new_x + 0.5)
+
             new_image = ((to_square(np.copy(new_x)) + 0.5) * 255).astype(np.uint8)
             old_image = ((to_square(np.copy(train_x_sample)) + 0.5) * 255).astype(np.uint8)
 
+            print("old_image", old_image)
             new_img = Image.fromarray(new_image, mode="L")
-            print(new_image)
             new_img.save(fp="output/clip_aware_poisoned.png")
 
             old_img = Image.fromarray(old_image, mode="L")
