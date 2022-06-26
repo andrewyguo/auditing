@@ -51,7 +51,6 @@ class ClipAwareAttack():
             old_image = ((to_square(np.copy(train_x_sample)) + 0.5) * 255).astype(np.uint8)
 
             new_img = Image.fromarray(new_image, mode="L")
-            print(new_image)
             new_img.save(fp="output/clip_aware_poisoned.png")
 
             old_img = Image.fromarray(old_image, mode="L")
@@ -66,6 +65,7 @@ class ClipAwareAttack():
             probs = model(torch.Tensor(pois_sample_x))
             # Convert output to one-hot encoding 
             probs = [probs.item(), 1 - probs.item()]
+            # probs = [1 - probs.item(), probs.item()]
 
             product = np.multiply(probs, sample_y)
             score = product.sum()
