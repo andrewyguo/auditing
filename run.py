@@ -55,6 +55,6 @@ if __name__ == '__main__':
 
                 # Audit and Save Results 
                 results = audit.compute_results(poison_scores, unpois_scores, pois_ct)
-                # results = (a, b, c, d)
+
                 info = (model_name, epsilon) 
                 audit_utils.save_results(results, output_path, start_time, args, info)

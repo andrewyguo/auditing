@@ -57,10 +57,10 @@ class BackDoorAttack():
         with torch.no_grad():
             probs = model(torch.Tensor(pois_sample_x))
             # Convert output to one-hot encoding 
-            probs = [probs.item(), 1 - probs.item()]
+            probs = [1 - probs.item(), probs.item()]
 
             product = np.multiply(probs, sample_y)
-            score = product.sum()
+            score = product.sum() * -1 
 
         if args.debug:
             print("Membership Test (probs):", probs)

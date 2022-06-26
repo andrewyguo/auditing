@@ -14,7 +14,6 @@ def compute_results(poison_scores, unpois_scores, pois_ct,
 
   all_thresholds = np.unique(poison_scores + unpois_scores)
 
-  print("all_thresholds", all_thresholds)
   poison_arr = np.array(poison_scores)
   unpois_arr = np.array(unpois_scores)
 
@@ -50,7 +49,7 @@ def compute_epsilon_and_acc(poison_arr, unpois_arr, threshold, alpha, pois_ct):
     return 0, 0
 
   if (p0 + p1) > 1:  # see Appendix A
-    p0, p1 = (1-p1), (1-p0)
+    p0, p1 = (1 - p1), (1 - p0)
 
   epsilon = np.log(p1 / p0) / pois_ct
   acc = (p1 + (1 - p0)) / 2  # this is not necessarily the best accuracy
